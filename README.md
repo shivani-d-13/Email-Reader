@@ -13,7 +13,7 @@ This Python script connects to your **Gmail inbox**, searches for emails with a 
 ## 📁 Folder Structure
 
 Email-Reader/
-├── main.py
+├── read_email_excel.py
 ├── .env
 ├── token.json
 ├── credentials.json
@@ -22,10 +22,33 @@ Email-Reader/
 ## 🛠️ Setup Instructions
 
 1. Clone this repo
-2. Create a `.env` file with:
-    EMAIL_ADDRESS = youremail
-3. 
+```bash
+git clone https://github.com/shivani-d-13/Email-Reader.git
+cd Email-Reader
+```
+2. Setup virtual environment
+```bash
+python -m venv venv
+source venv/bin/activate    # On Windows: venv\Scripts\activate
+```
+3. Install Required Dependencies
+```bash
+pip install -r requirements.txt
+```
+4. Follow [this guide](https://developers.google.com/gmail/api/quickstart/python) to get `credentials.json`
+5. Create .env File
+    In the root of your project, create a .env file with the following content:
+        EMAIL_USER=youremail@gmail.com
+7. Run the script
+```bash
+python read_email_excel.py
+```
+
+
+
+
+
 
 
 ## NOTE
-[NOTE: THIS IS ONLY A BASIC VERSION. Involves: Reading Gmail Attachment and Displaying the contents]
+[NOTE: THIS IS ONLY A BASIC VERSION. Involves: Reading Gmail attachment (.xlsx ONLY) and displaying the contents]
