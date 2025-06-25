@@ -11,7 +11,7 @@ import openpyxl
 load_dotenv()
 EMAIL_ADDRESS = os.getenv('EMAIL_ADDRESS')
 
-SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
+SCOPES = ['https://www.googleapis.com/auth/gmail.modify']
 CREDENTIALS_FILE = 'credentials.json'
 TOKEN_FILE = 'token.json'
 
@@ -30,7 +30,7 @@ def authenticate():
     return creds
 
 def search_emails(service, subject):
-    query = f'subject:"{subject}"'
+    query = f'subject:"{subject}" is:unread'
     result = service.users().messages().list(userId='me', q=query).execute()
     messages = result.get('messages', [])
     return messages
@@ -50,6 +50,14 @@ def get_excel_attachment(service, message_id):
     print("No Excel attachment found.")
     return None
 
+def mark_as_read(service, message_id):
+    service.users().messages().modify(
+        userId='me',
+        id=message_id,
+        body={'removeLabelIds': ['UNREAD']}
+    ).execute()
+    print("Marked email as read.")
+
 def read_excel(file_path):
     wb = openpyxl.load_workbook(file_path)
     sheet = wb.active
@@ -62,13 +70,14 @@ def main():
     subject_to_search = "Job Register"  # Change to your subject
     messages = search_emails(service, subject_to_search)
     if not messages:
-        print("No emails found with that subject.")
+        print("No unread emails found with that subject.")
         return
 
     latest_message_id = messages[0]['id']
     file_path = get_excel_attachment(service, latest_message_id)
     if file_path:
         read_excel(file_path)
+        mark_as_read(service, latest_message_id)
 
 if __name__ == '__main__':
     main()
