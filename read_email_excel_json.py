@@ -8,7 +8,7 @@ from googleapiclient.discovery import build
 from dotenv import load_dotenv
 import openpyxl
 import json
-from datetime import datetime
+from datetime import datetime, date
 
 load_dotenv()
 EMAIL_ADDRESS = os.getenv('EMAIL_ADDRESS')
@@ -66,7 +66,7 @@ def read_excel(file_path):
     sheet = wb.active
 
     data = []
-    headers = [cell.value for cell in next(sheet.iter_rows(values_only=True))]
+    headers = list(next(sheet.iter_rows(values_only=True)))
 
     for row in sheet.iter_rows(min_row=2, values_only=True):
         row_dict = dict(zip(headers, row))
@@ -75,8 +75,13 @@ def read_excel(file_path):
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     json_filename = f'output_{timestamp}.json'
 
+    def date_serializer(obj):
+        if isinstance(obj, (datetime, date)):
+            return obj.strftime("%Y-%m-%d")
+        raise TypeError(f"Type {type(obj)} not serializable")
+
     with open(json_filename, 'w', encoding='utf-8') as f:
-        json.dump(data, f, indent=4, ensure_ascii=False)
+        json.dump(data, f, indent=4, ensure_ascii=False, default=date_serializer)
 
     print(f"Excel data saved to '{json_filename}'")
 

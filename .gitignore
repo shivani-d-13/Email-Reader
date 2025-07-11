@@ -5,6 +5,7 @@ venv/
 .env
 credentials.json
 token.json
+*.json
 
 # System and editor files
 __pycache__/
